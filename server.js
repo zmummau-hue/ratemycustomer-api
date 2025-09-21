@@ -65,7 +65,7 @@ app.post('/auth/register-owner', async (req, res) => {
     res.json({ user: q.rows[0] });
   } catch (e) {
     console.error(e);
-    res.status(500).json({ error: 'server error' });
+    res.status(500).json({ error: String(e) });
   }
 });
 
