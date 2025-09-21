@@ -1,3 +1,6 @@
+import dns from 'dns';
+dns.setDefaultResultOrder('ipv4first');   // <— add this line
+
 import pkg from 'pg';
 const { Pool } = pkg;
 
