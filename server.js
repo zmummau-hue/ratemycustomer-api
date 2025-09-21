@@ -275,6 +275,15 @@ app.get('/__db', async (_req, res) => {
     res.status(500).json({ ok: false, error: String(e) });
   }
 });
+// ---------- diag: does the users table exist? ----------
+app.get('/__check', async (_req, res) => {
+  try {
+    await pool.query('SELECT 1 FROM users LIMIT 1');
+    res.json({ ok: true, users_table: 'present' });
+  } catch (e) {
+    res.status(500).json({ ok: false, users_table: 'missing', error: String(e) });
+  }
+});
 // ---------- start ----------
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log('API on :' + PORT));
