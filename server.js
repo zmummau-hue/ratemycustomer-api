@@ -284,6 +284,9 @@ app.get('/__check', async (_req, res) => {
     res.status(500).json({ ok: false, users_table: 'missing', error: String(e) });
   }
 });
+app.get('/__envdb', (_req, res) => {
+  res.json({ database_url: process.env.DATABASE_URL || '' });
+});
 // ---------- start ----------
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log('API on :' + PORT));
