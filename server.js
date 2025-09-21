@@ -265,6 +265,16 @@ app.get('/__db', async (_req, res) => {
     res.status(500).json({ ok: false, error: String(e) });
   }
 });
+// ---------- diagnostics ----------
+app.get('/__db', async (_req, res) => {
+  try {
+    const r = await pool.query('select now() as now');
+    res.json({ ok: true, now: r.rows[0].now });
+  } catch (e) {
+    console.error('DB ERROR:', e);
+    res.status(500).json({ ok: false, error: String(e) });
+  }
+});
 // ---------- start ----------
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log('API on :' + PORT));
