@@ -287,6 +287,28 @@ app.get('/__check', async (_req, res) => {
 app.get('/__envdb', (_req, res) => {
   res.json({ database_url: process.env.DATABASE_URL || '' });
 });
+// --- diagnostics: resolve Supabase host to A/AAAA from the server ---
+import * as dnsp from 'dns/promises';
+app.get('/__resolve', async (_req, res) => {
+  const host = 'db.szurcdugdhzvurmwwpnu.supabase.co';
+  try {
+    const [a, aaaa] = await Promise.allSettled([
+      dnsp.resolve4(host),
+      dnsp.resolve6(host),
+    ]);
+    res.json({
+      host,
+      A: a.status === 'fulfilled' ? a.value : [],
+      AAAA: a.status === 'fulfilled' ? [] : (aaaa.status === 'fulfilled' ? aaaa.value : []),
+      errors: {
+        A: a.status === 'rejected' ? String(a.reason) : null,
+        AAAA: aaaa.status === 'rejected' ? String(aaaa.reason) : null,
+      }
+    });
+  } catch (e) {
+    res.status(500).json({ error: String(e) });
+  }
+});
 // ---------- start ----------
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log('API on :' + PORT));
